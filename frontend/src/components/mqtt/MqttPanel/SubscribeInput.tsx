@@ -19,7 +19,6 @@ const SubscribeInput : React.FC<Props> = ({ onSubscribe }) => {
     <div style={{
       display: 'flex',
       alignItems: 'center',
-      marginBottom: '1rem',
       gap: '0.5rem',
     }}>
       <input

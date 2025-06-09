@@ -8,8 +8,8 @@ interface Props {
 const SubscribedTopicsList: React.FC<Props> = ({ topics, onUnsubscribe }) => {
   return (
     <div style={{ marginBottom: '1rem' }}>
-      <h3 style={{ color: 'gold' }}>Subscribed Topics</h3>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+      <h4 style={{ color: 'gold' }}>Subscribed Topics</h4>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
         {topics.map((topic) => (
           <div
             key={topic}

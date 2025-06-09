@@ -1,15 +1,15 @@
 import React from 'react';
 
 interface DuplicateGroup {
-    topics: string[];
+  topics: string[];
 }
 
 interface Props {
-    duplicates: DuplicateGroup[];
-    onUnsubscribe: (topic: string) => void;
+  duplicates: DuplicateGroup[];
+  onSelectGroup: (topics: string[]) => void;
 }
 
-const DuplicateList: React.FC<Props> = ({ duplicates, onUnsubscribe }) => {
+const DuplicateList: React.FC<Props> = ({ duplicates, onSelectGroup }) => {
   if (duplicates.length === 0) return null;
 
   return (
@@ -22,6 +22,7 @@ const DuplicateList: React.FC<Props> = ({ duplicates, onUnsubscribe }) => {
             {group.topics.map((t) => (
               <div
                 key={t}
+                onClick={() => onSelectGroup(group.topics)}
                 style={{
                   backgroundColor: '#444',
                   color: 'white',
@@ -29,22 +30,11 @@ const DuplicateList: React.FC<Props> = ({ duplicates, onUnsubscribe }) => {
                   borderRadius: '12px',
                   display: 'flex',
                   alignItems: 'center',
+                  cursor: 'pointer',
                 }}
+                title="Click to view graph for duplicate group"
               >
                 {t}
-                <button
-                  onClick={() => onUnsubscribe(t)}
-                  style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'red',
-                    marginLeft: '8px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                  }}
-                >
-                  ×
-                </button>
               </div>
             ))}
           </div>
