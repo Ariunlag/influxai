@@ -2,6 +2,8 @@ import React from 'react';
 import SubscribeInput from './SubscribeInput';
 import SubscribedTopicsList from './SubscribedTopicsList';
 import MqttMessageLog from './MqttMessageLog';
+import { subscribeTopic, unsubscribeTopic } from '../../../services/mqttApi';
+
 import { useMqttStore } from '../../../store/useMqttStore';
 
 // Sidebar (left) style
@@ -23,18 +25,25 @@ const contentStyle: React.CSSProperties = {
 const MqttPanel: React.FC = () => {
   const topics = useMqttStore(state => state.topics);
   const messages = useMqttStore(state => state.messages);
+  const addTopic = useMqttStore(state => state.addTopic);
   const removeTopic = useMqttStore(state => state.removeTopic);
   const addMessage = useMqttStore(state => state.addMessage);
 
-  const handleUnsubscribe = (topic: string) => {
-    removeTopic(topic);
-    addMessage(`Unsubscribed from: ${topic}`);
+  const handleSubscribe = async(topic: string) => {
+    try {
+      await subscribeTopic(topic);
+      addTopic(topic);
+    } catch {
+      addMessage('Error subscribing from topic:');
+    }
   };
 
-  const handleSubscribe = (topic: string) => {
-    if (!topics.includes(topic)) {
-      useMqttStore.getState().addTopic(topic);
-      addMessage(`Subscribed to: ${topic}`);
+  const handleUnsubscribe = async(topic: string) => {
+    try {
+      await unsubscribeTopic(topic);
+      removeTopic(topic);
+    } catch {
+      addMessage('Error unsubscribing from topic:');
     }
   };
 

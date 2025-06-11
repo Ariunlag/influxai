@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface DuplicateGroup {
   topics: string[];
@@ -18,44 +19,54 @@ interface MqttState {
   clear: () => void;
 }
 
-export const useMqttStore = create<MqttState>((set, get) => ({
-  topics: [],
-  messages: [],
-  duplicates: [],
-  duplicateMsgs: [],
-
-  addTopic: (topic) => {
-    const { topics } = get();
-    if (!topics.includes(topic)) {
-      set({ topics: [...topics, topic] });
-    }
-  },
-
-  removeTopic: (topic) => {
-    const { topics } = get();
-    set({ topics: topics.filter((t) => t !== topic) });
-  },
-
-  addMessage: (msg) => {
-    const { messages } = get();
-    set({ messages: [...messages, msg] });
-  },
-
-  setDuplicates: (groups) => {
-    set({ duplicates: groups });
-  },
-
-  addDuplicateMsg: (msg) => {
-    const { duplicateMsgs } = get();
-    set({ duplicateMsgs: [...duplicateMsgs, msg] });
-  },
-
-  clear: () => {
-    set({
+export const useMqttStore = create<MqttState>()(
+  persist(
+    (set, get) => ({
       topics: [],
       messages: [],
       duplicates: [],
       duplicateMsgs: [],
-    });
-  },
-}));
+
+      addTopic: (topic) => {
+        console.log('[Store] Adding topic:', topic);
+        const { topics } = get();
+        if (!topics.includes(topic)) {
+          set({ topics: [...topics, topic] });
+        }
+      },
+
+      removeTopic: (topic) => {
+        console.log('[Store] Removing topic:', topic);
+        const { topics } = get();
+        set({ topics: topics.filter((t) => t !== topic) });
+      },
+
+      addMessage: (msg) => {
+        console.log('[Store] Adding message:', msg);
+        const { messages } = get();
+        set({ messages: [...messages, msg].slice(-300) });
+      },
+
+      setDuplicates: (groups) => {
+        set({ duplicates: groups });
+      },
+
+      addDuplicateMsg: (msg) => {
+        const { duplicateMsgs } = get();
+        set({ duplicateMsgs: [...duplicateMsgs, msg] });
+      },
+
+      clear: () => {
+        set({
+          topics: [],
+          messages: [],
+          duplicates: [],
+          duplicateMsgs: [],
+        });
+      },
+    }),
+    {
+      name: 'mqtt-store', // localStorage key
+    }
+  )
+);
